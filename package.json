@@ -1,0 +1,42 @@
+{
+  "name": "ecmaker",
+  "version": "0.1.0",
+  "description": "Shopify テーマ（Online Store 2.0）をフォーム入力から生成し、そのままアップロードできる zip でダウンロードするローカルツール。Neo+AID テーマをシードに使用。",
+  "bin": {
+    "ecmaker": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    ".next/standalone",
+    ".next/static",
+    "public",
+    "templates"
+  ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "node bin/cli.js",
+    "lint": "eslint",
+    "prepublishOnly": "next build"
+  },
+  "dependencies": {
+    "@types/adm-zip": "^0.5.8",
+    "adm-zip": "^0.5.17",
+    "next": "16.2.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
