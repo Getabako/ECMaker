@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Faq = { q: string; a: string };
 
@@ -174,6 +174,8 @@ export default function Home() {
       <SiteHeader />
       <div className="max-w-5xl mx-auto px-6 py-10 space-y-8">
         <SectionTitle title="EC Maker" subtitle="Shopify テーマ自動生成室 / Online Store 2.0 対応" />
+
+        <UrlPrepHelp />
 
         {phase === "generating" && (
           <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 p-8 text-center shadow-sm">
@@ -685,16 +687,6 @@ function ResultView({
           )}
         </p>
 
-        <div className="rounded-2xl bg-amber-50 border-2 border-amber-300 p-6 text-left text-sm text-stone-700 space-y-2">
-          <div className="font-bold text-amber-700">Shopify への適用手順</div>
-          <ol className="list-decimal pl-5 space-y-1">
-            <li>下のボタンで zip をダウンロード</li>
-            <li>Shopify 管理画面 → <b>オンラインストア → テーマ</b> を開く</li>
-            <li>「テーマを追加 → zip ファイルをアップロード」を選択</li>
-            <li>アップロードしたテーマを「公開」して完了</li>
-          </ol>
-        </div>
-
         <div className="flex justify-center gap-3 pt-2">
           <a
             href={`/api/download/${id}`}
@@ -709,7 +701,254 @@ function ResultView({
             もう一度作る
           </button>
         </div>
+
+        <div className="text-left pt-4">
+          <PublishHelp />
+        </div>
       </div>
     </main>
+  );
+}
+
+function CollapsiblePanel({
+  storageKey,
+  badge,
+  badgeClass,
+  title,
+  accent,
+  children,
+}: {
+  storageKey: string;
+  badge: string;
+  badgeClass?: string;
+  title: string;
+  accent: "blue" | "green";
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(storageKey);
+      if (v === "1") setOpen(false);
+    } catch {}
+    setHydrated(true);
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(storageKey, open ? "0" : "1");
+    } catch {}
+  }, [open, hydrated, storageKey]);
+
+  const accentBar =
+    accent === "blue"
+      ? "from-sky-500 to-indigo-500"
+      : "from-emerald-500 to-teal-500";
+  const accentBg =
+    accent === "blue"
+      ? "bg-sky-50/70 border-sky-200"
+      : "bg-emerald-50/70 border-emerald-200";
+  const accentText =
+    accent === "blue" ? "text-sky-900" : "text-emerald-900";
+
+  return (
+    <section
+      className={
+        "relative rounded-3xl backdrop-blur border-2 shadow-md overflow-hidden " +
+        accentBg
+      }
+    >
+      <div
+        aria-hidden
+        className={"absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b " + accentBar}
+      />
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full p-6 pl-7 flex items-center gap-3 text-left"
+        aria-expanded={open}
+      >
+        <span
+          className={
+            "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase text-white shadow-sm bg-gradient-to-r " +
+            (badgeClass ?? accentBar)
+          }
+        >
+          {badge}
+        </span>
+        <h2 className={"text-lg md:text-xl font-extrabold tracking-wide flex-1 " + accentText}>
+          {title}
+        </h2>
+        <span
+          className={
+            "text-2xl font-bold transition-transform " + (open ? "rotate-180" : "")
+          }
+          aria-hidden
+        >
+          ⌄
+        </span>
+      </button>
+      {open && (
+        <div className="px-6 pl-7 pb-6 -mt-2 space-y-3 text-stone-700 text-sm md:text-base leading-relaxed">
+          {children}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function UrlPrepHelp() {
+  return (
+    <CollapsiblePanel
+      storageKey="ecm:url-prep-collapsed"
+      badge="Step 0"
+      title="先にやっておくこと — 画像と動画のURLを準備しよう"
+      accent="blue"
+    >
+      <p>
+        EC Maker は画像や動画を <b>直接アップロードしません</b>。Shopify
+        にアップしてから、その <b>URL（CDN リンク）</b> をフォームに貼ってもらう方式です。先にこれを済ませておくとサクサク進みます。
+      </p>
+
+      <div className="rounded-xl bg-white/80 border border-sky-200 p-4 space-y-3">
+        <div className="font-bold text-sky-900">▸ アップロード手順</div>
+        <ol className="list-decimal pl-5 space-y-2">
+          <li>
+            Shopify 管理画面 →{" "}
+            <b>コンテンツ → ファイル</b> を開く
+          </li>
+          <li>
+            右上の <b>「ファイルをアップロード」</b> ボタンから、画像 / 動画を選択
+          </li>
+          <li>
+            アップロードが終わると、各ファイルの右側に{" "}
+            <span className="inline-block px-1.5 py-0.5 rounded bg-stone-100 border border-stone-300 text-xs font-mono">
+              🔗
+            </span>{" "}
+            <b>リンクアイコン</b> が出現。これをクリックして URL をコピー
+          </li>
+          <li>
+            EC Maker の各 URL 入力欄にそのまま貼り付け
+          </li>
+        </ol>
+      </div>
+
+      <div className="rounded-xl bg-white/80 border border-sky-200 p-4 space-y-2">
+        <div className="font-bold text-sky-900">▸ コピーできる URL の形</div>
+        <ul className="space-y-1 font-mono text-xs md:text-sm break-all">
+          <li>
+            🖼️ 画像 →{" "}
+            <span className="text-sky-700">
+              https://cdn.shopify.com/s/files/.../filename.jpg
+            </span>
+          </li>
+          <li>
+            🎬 動画 →{" "}
+            <span className="text-sky-700">
+              https://cdn.shopify.com/videos/c/o/v/xxxxx.mp4
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div className="rounded-xl bg-amber-50 border border-amber-300 p-4 space-y-2">
+        <div className="font-bold text-amber-800">▸ なぜ URL 方式？</div>
+        <p>
+          動画ファイルは <b>50MB を超えると「テーマアセット」にはアップできず</b>
+          、Shopify の「コンテンツ → ファイル」だけが受け皿になります。そのため EC
+          Maker は <b>URL を貼る方式に統一</b> しています（画像も同じ流儀で楽）。
+        </p>
+      </div>
+
+      <div className="rounded-xl bg-white/80 border border-sky-200 p-4 space-y-1">
+        <div className="font-bold text-sky-900">▸ 対応フォーマット</div>
+        <ul className="list-disc pl-5 space-y-0.5">
+          <li>
+            画像: <b>jpg / png / webp</b>（webp が一番軽い）
+          </li>
+          <li>
+            動画: <b>mp4（H.264 + AAC 推奨）</b>。10〜20MB 以下が体感サクサク
+          </li>
+          <li>音声は常にミュート再生されるため、BGM は気にしなくて OK</li>
+        </ul>
+      </div>
+
+      <p className="text-xs text-stone-500">
+        ※ 一度準備しておけば、テーマを作り直すたびに同じ URL を貼り回せます。
+      </p>
+    </CollapsiblePanel>
+  );
+}
+
+function PublishHelp() {
+  return (
+    <CollapsiblePanel
+      storageKey="ecm:publish-help-collapsed"
+      badge="Next Step"
+      title="ダウンロードした zip を Shopify に公開する手順"
+      accent="green"
+    >
+      <p>
+        zip がダウンロードできたら、あとは Shopify
+        に乗せるだけ。下の順番でいけば 3 分で公開できます。
+      </p>
+
+      <div className="rounded-xl bg-white/80 border border-emerald-200 p-4">
+        <ol className="list-decimal pl-5 space-y-2.5">
+          <li>
+            Shopify 管理画面 →{" "}
+            <b>オンラインストア → テーマ</b> を開く
+          </li>
+          <li>
+            画面右側の <b>「テーマを追加」</b> ボタン →{" "}
+            <b>「zip ファイルをアップロード」</b> を選択
+          </li>
+          <li>
+            さっきダウンロードした zip を選んで <b>アップロード</b>。
+            <div className="mt-1 text-xs text-stone-500">
+              動画は URL 参照なので、zip 自体は数百 KB。数秒で完了し、テーマライブラリーに{" "}
+              <b>「下書き」</b> として追加されます。
+            </div>
+          </li>
+          <li>
+            追加された下書きテーマの <b>「…」メニュー</b> →{" "}
+            <span className="inline-block px-2 py-0.5 rounded bg-emerald-100 border border-emerald-300 font-bold text-emerald-800">
+              公開
+            </span>{" "}
+            を選択
+          </li>
+          <li>
+            ストアの URL（例:{" "}
+            <span className="font-mono text-xs bg-stone-100 px-1.5 py-0.5 rounded border border-stone-300">
+              your-store.myshopify.com
+            </span>
+            ）を開いて反映を確認
+          </li>
+        </ol>
+      </div>
+
+      <div className="rounded-xl bg-amber-50 border border-amber-300 p-4 space-y-1.5">
+        <div className="font-bold text-amber-800">
+          ▸ 表示がおかしい / 元に戻したいとき
+        </div>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>
+            EC Maker に戻って <b>修正 → 再生成 → 再アップロード → 再公開</b>
+          </li>
+          <li>
+            ロールバック: テーマライブラリーの <b>旧テーマ</b> の「…」→{" "}
+            <b>「公開」</b>{" "}
+            を押せばワンクリックで戻せます（旧テーマは消えず保管されているので安心）
+          </li>
+        </ul>
+      </div>
+
+      <p className="text-xs text-stone-500">
+        ※ 公開中のテーマは削除できません。整理したい古いテーマがある場合は、別のテーマを公開してから削除してください。
+      </p>
+    </CollapsiblePanel>
   );
 }
