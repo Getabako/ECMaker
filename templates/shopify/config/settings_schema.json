@@ -1,33 +1,84 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Neo+AID",
-    "theme_version": "1.1.0",
-    "theme_author": "Neo+AID",
-    "theme_documentation_url": "https://neo-puls-aid.myshopify.com",
-    "theme_support_url": "https://neo-puls-aid.myshopify.com"
+    "theme_name": "Generic Shopify Theme",
+    "theme_version": "1.0.0",
+    "theme_author": "ECMaker",
+    "theme_documentation_url": "",
+    "theme_support_url": ""
   },
   {
-    "name": "Hero Videos",
+    "name": "Branding",
     "settings": [
-      {
-        "type": "header",
-        "content": "ヒーロー動画 (最大6本)"
-      },
-      {
-        "type": "paragraph",
-        "content": "デフォルトで6本の動画URLがテーマに直接埋め込まれています。差し替えたい時だけ、Shopify「コンテンツ → ファイル」にアップした mp4 のURLを下のスロットに貼り付けてください (空欄ならテーマのデフォルトURLが使われます)。"
-      },
-      { "type": "url", "id": "hero_video_url_1", "label": "動画 1 (mp4)" },
-      { "type": "url", "id": "hero_video_url_2", "label": "動画 2 (mp4)" },
-      { "type": "url", "id": "hero_video_url_3", "label": "動画 3 (mp4)" },
-      { "type": "url", "id": "hero_video_url_4", "label": "動画 4 (mp4)" },
-      { "type": "url", "id": "hero_video_url_5", "label": "動画 5 (mp4)" },
-      { "type": "url", "id": "hero_video_url_6", "label": "動画 6 (mp4)" },
-      {
-        "type": "paragraph",
-        "content": "各動画は最後まで再生されてから次に切り替わります。ヒーロー左右の前後ボタンで手動切替も可能。再生順は毎セッション ランダムシャッフルです。"
-      }
+      { "type": "image_picker", "id": "logo", "label": "Logo" },
+      { "type": "image_picker", "id": "favicon", "label": "Favicon" },
+      { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#1a3a5c" },
+      { "type": "text", "id": "shop_tagline", "label": "Shop tagline (browser tab)", "default": "" },
+      { "type": "textarea", "id": "shop_description", "label": "Shop description (SEO)", "default": "" }
+    ]
+  },
+  {
+    "name": "Hero",
+    "settings": [
+      { "type": "text", "id": "hero_eyebrow", "label": "Hero eyebrow (small line above title)", "default": "" },
+      { "type": "text", "id": "hero_headline", "label": "Hero headline", "default": "" },
+      { "type": "textarea", "id": "hero_subtitle", "label": "Hero subtitle", "default": "" },
+      { "type": "text", "id": "hero_cta_primary_label", "label": "Primary CTA label", "default": "Shop Now" },
+      { "type": "url", "id": "hero_cta_primary_url", "label": "Primary CTA link" },
+      { "type": "text", "id": "hero_cta_secondary_label", "label": "Secondary CTA label", "default": "" },
+      { "type": "url", "id": "hero_cta_secondary_url", "label": "Secondary CTA link" },
+      { "type": "header", "content": "Hero videos (up to 6, muted, auto-advance)" },
+      { "type": "paragraph", "content": "mp4 をアップロードして URL を貼り付けます (Shopify 管理画面 → コンテンツ → ファイル)。空欄のスロットはスキップされます。" },
+      { "type": "url", "id": "hero_video_url_1", "label": "Video 1 (mp4)" },
+      { "type": "url", "id": "hero_video_url_2", "label": "Video 2 (mp4)" },
+      { "type": "url", "id": "hero_video_url_3", "label": "Video 3 (mp4)" },
+      { "type": "url", "id": "hero_video_url_4", "label": "Video 4 (mp4)" },
+      { "type": "url", "id": "hero_video_url_5", "label": "Video 5 (mp4)" },
+      { "type": "url", "id": "hero_video_url_6", "label": "Video 6 (mp4)" }
+    ]
+  },
+  {
+    "name": "Products section",
+    "settings": [
+      { "type": "text", "id": "products_section_title", "label": "Section title", "default": "Products" },
+      { "type": "textarea", "id": "products_section_subtitle", "label": "Section subtitle", "default": "" }
+    ]
+  },
+  {
+    "name": "Brands section",
+    "settings": [
+      { "type": "text", "id": "brands_section_title", "label": "Section title", "default": "Brands" },
+      { "type": "textarea", "id": "brands_list", "label": "Brand list (comma-separated)", "default": "" }
+    ]
+  },
+  {
+    "name": "About / Store",
+    "settings": [
+      { "type": "text", "id": "about_section_title", "label": "Section title", "default": "About" },
+      { "type": "textarea", "id": "about_quote", "label": "About quote (large)", "default": "" },
+      { "type": "textarea", "id": "about_body", "label": "About body", "default": "" },
+      { "type": "text", "id": "store_address", "label": "Address", "default": "" },
+      { "type": "text", "id": "store_hours", "label": "Hours", "default": "" },
+      { "type": "text", "id": "store_access", "label": "Access", "default": "" },
+      { "type": "text", "id": "store_maps_query", "label": "Maps search query", "info": "Used for the embedded map and directions link." },
+      { "type": "paragraph", "content": "FAQ format: 'question :: answer' separated by '|'. Example: 'Q1 :: A1 | Q2 :: A2'" },
+      { "type": "textarea", "id": "faq_list", "label": "FAQ list", "default": "" }
+    ]
+  },
+  {
+    "name": "Social",
+    "settings": [
+      { "type": "text", "id": "social_section_title", "label": "Section title", "default": "Follow Us" },
+      { "type": "url", "id": "instagram_official", "label": "Instagram (official) URL" },
+      { "type": "text", "id": "instagram_official_handle", "label": "Instagram (official) handle", "default": "" },
+      { "type": "url", "id": "instagram_secondary", "label": "Instagram (sub) URL" },
+      { "type": "text", "id": "instagram_secondary_handle", "label": "Instagram (sub) handle", "default": "" }
+    ]
+  },
+  {
+    "name": "Footer",
+    "settings": [
+      { "type": "text", "id": "copyright_line", "label": "Copyright line", "default": "" }
     ]
   }
 ]

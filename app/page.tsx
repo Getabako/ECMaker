@@ -6,61 +6,68 @@ type Faq = { q: string; a: string };
 
 type Brief = {
   shopName: string;
-  shopNameEn: string;
-  tagline: string;
-  subTagline: string;
+  shopTagline: string;
   description: string;
-  primaryColor: string;
   accentColor: string;
-  bloodColor: string;
-  darkMode: boolean;
+  heroEyebrow: string;
+  heroHeadline: string;
+  heroSubtitle: string;
+  heroCtaPrimaryLabel: string;
+  heroCtaPrimaryUrl: string;
+  heroCtaSecondaryLabel: string;
+  heroCtaSecondaryUrl: string;
   heroVideoUrls: string[];
-  address: string;
-  hours: string;
-  access: string;
-  mapsQuery: string;
-  instagramOfficial: string;
-  instagramDelivery: string;
+  productsSectionTitle: string;
+  productsSectionSubtitle: string;
+  brandsSectionTitle: string;
+  brands: string[];
+  aboutSectionTitle: string;
   aboutQuote: string;
   aboutBody: string;
-  navDeliveryLabel: string;
-  brands: string[];
+  storeAddress: string;
+  storeHours: string;
+  storeAccess: string;
+  storeMapsQuery: string;
   faqs: Faq[];
-  ageGate: boolean;
-  ageMin: number;
+  socialSectionTitle: string;
+  instagramOfficial: string;
+  instagramOfficialHandle: string;
+  instagramSecondary: string;
+  instagramSecondaryHandle: string;
   copyrightLine: string;
 };
 
 const INITIAL: Brief = {
-  shopName: "Neo+AID",
-  shopNameEn: "NEO PLUS AID",
-  tagline: "CHILL BEYOND THE LIMIT.",
-  subTagline: "日本一ピースなCBDショップ。",
-  description: "新潟駅から3分。日本一ピースなCBDショップ。",
-  primaryColor: "#0a0a0a",
-  accentColor: "#c5ff00",
-  bloodColor: "#ff2d2d",
-  darkMode: true,
+  shopName: "My Shop",
+  shopTagline: "",
+  description: "",
+  accentColor: "#1a3a5c",
+  heroEyebrow: "",
+  heroHeadline: "Welcome to My Shop",
+  heroSubtitle: "厳選した商品をお届けします。",
+  heroCtaPrimaryLabel: "Shop Now",
+  heroCtaPrimaryUrl: "",
+  heroCtaSecondaryLabel: "About",
+  heroCtaSecondaryUrl: "/pages/about",
   heroVideoUrls: ["", "", "", "", "", ""],
-  address: "新潟市中央区東大通1-3-20 木村ビル1F",
-  hours: "15:00 — 23:00 / EVERYDAY",
-  access: "新潟駅 万代口より 徒歩3分",
-  mapsQuery: "新潟市中央区東大通1-3-20",
-  instagramOfficial: "https://www.instagram.com/neo_plusaid_official/",
-  instagramDelivery: "https://www.instagram.com/neoplus_delivery/",
-  aboutQuote: "日本一ピースなCBDショップ。新潟駅から徒歩3分。",
-  aboutBody:
-    "初めての方も、リピーターも。気軽に立ち寄れる cool chill な空間。スタッフが一人ひとりに合わせてご案内します。",
-  navDeliveryLabel: "DELIVERY",
-  brands: ["H4CBH", "HHBD", "CRDP", "ARBOL", "yongans", "+ more"],
-  faqs: [
-    { q: "初めてでも大丈夫？", a: "はい。スタッフが好み・体感・予算を伺った上でご案内します。20歳以上の方限定。" },
-    { q: "支払い方法は？", a: "現金 / 各種クレジット / PayPay / 電子マネー対応。" },
-    { q: "デリバリーは？", a: "新潟市内対応。Instagram DM までお問い合わせください。" },
-  ],
-  ageGate: true,
-  ageMin: 20,
-  copyrightLine: "NEO PLUS AID · NIIGATA · 20+ ONLY · ALL RIGHTS RESERVED",
+  productsSectionTitle: "Products",
+  productsSectionSubtitle: "",
+  brandsSectionTitle: "Brands",
+  brands: [],
+  aboutSectionTitle: "About",
+  aboutQuote: "",
+  aboutBody: "",
+  storeAddress: "",
+  storeHours: "",
+  storeAccess: "",
+  storeMapsQuery: "",
+  faqs: [],
+  socialSectionTitle: "Follow Us",
+  instagramOfficial: "",
+  instagramOfficialHandle: "",
+  instagramSecondary: "",
+  instagramSecondaryHandle: "",
+  copyrightLine: "",
 };
 
 type Phase = "form" | "generating" | "done";
@@ -164,37 +171,19 @@ export default function Home() {
         )}
 
         <Card title="店舗の基本情報" badge="Shop">
-          <Row>
-            <Field label="店舗名（表示用）">
-              <input
-                className={input}
-                value={brief.shopName}
-                onChange={(e) => setBrief({ ...brief, shopName: e.target.value })}
-                placeholder="Neo+AID"
-              />
-            </Field>
-            <Field label="店舗名（英大文字 / ヒーロー用）">
-              <input
-                className={input}
-                value={brief.shopNameEn}
-                onChange={(e) => setBrief({ ...brief, shopNameEn: e.target.value })}
-                placeholder="NEO PLUS AID"
-              />
-            </Field>
-          </Row>
-          <Field label="タグライン（ヒーローの巨大文字）">
+          <Field label="店舗名">
             <input
               className={input}
-              value={brief.tagline}
-              onChange={(e) => setBrief({ ...brief, tagline: e.target.value })}
-              placeholder="CHILL BEYOND THE LIMIT."
+              value={brief.shopName}
+              onChange={(e) => setBrief({ ...brief, shopName: e.target.value })}
+              placeholder="My Shop"
             />
           </Field>
-          <Field label="サブタグライン（短い説明）">
+          <Field label="ショップタグライン（ブラウザタブ用、任意）">
             <input
               className={input}
-              value={brief.subTagline}
-              onChange={(e) => setBrief({ ...brief, subTagline: e.target.value })}
+              value={brief.shopTagline}
+              onChange={(e) => setBrief({ ...brief, shopTagline: e.target.value })}
             />
           </Field>
           <Field label="メタディスクリプション（SEO 用）">
@@ -205,19 +194,77 @@ export default function Home() {
               onChange={(e) => setBrief({ ...brief, description: e.target.value })}
             />
           </Field>
+          <ColorField
+            label="アクセントカラー"
+            value={brief.accentColor}
+            onChange={(v) => setBrief({ ...brief, accentColor: v })}
+          />
         </Card>
 
-        <Card title="ブランドカラー" badge="Color">
+        <Card title="ヒーロー" badge="Hero">
+          <Field label="ヒーロー上の小見出し（任意）">
+            <input
+              className={input}
+              value={brief.heroEyebrow}
+              onChange={(e) => setBrief({ ...brief, heroEyebrow: e.target.value })}
+              placeholder="EST. 2024"
+            />
+          </Field>
+          <Field label="ヒーロー大見出し">
+            <input
+              className={input}
+              value={brief.heroHeadline}
+              onChange={(e) => setBrief({ ...brief, heroHeadline: e.target.value })}
+              placeholder="Welcome to My Shop"
+            />
+          </Field>
+          <Field label="ヒーローサブタイトル">
+            <textarea
+              className={input}
+              rows={2}
+              value={brief.heroSubtitle}
+              onChange={(e) => setBrief({ ...brief, heroSubtitle: e.target.value })}
+            />
+          </Field>
           <Row>
-            <ColorField label="メインカラー" value={brief.primaryColor} onChange={(v) => setBrief({ ...brief, primaryColor: v })} />
-            <ColorField label="アクセントカラー" value={brief.accentColor} onChange={(v) => setBrief({ ...brief, accentColor: v })} />
+            <Field label="メイン CTA ラベル">
+              <input
+                className={input}
+                value={brief.heroCtaPrimaryLabel}
+                onChange={(e) => setBrief({ ...brief, heroCtaPrimaryLabel: e.target.value })}
+              />
+            </Field>
+            <Field label="メイン CTA リンク（任意。空なら /collections/all）">
+              <input
+                className={input + " font-mono text-sm"}
+                value={brief.heroCtaPrimaryUrl}
+                onChange={(e) => setBrief({ ...brief, heroCtaPrimaryUrl: e.target.value })}
+                placeholder="/collections/all"
+              />
+            </Field>
           </Row>
-          <ColorField label="ブラッド／danger 色" value={brief.bloodColor} onChange={(v) => setBrief({ ...brief, bloodColor: v })} />
+          <Row>
+            <Field label="サブ CTA ラベル（任意）">
+              <input
+                className={input}
+                value={brief.heroCtaSecondaryLabel}
+                onChange={(e) => setBrief({ ...brief, heroCtaSecondaryLabel: e.target.value })}
+              />
+            </Field>
+            <Field label="サブ CTA リンク">
+              <input
+                className={input + " font-mono text-sm"}
+                value={brief.heroCtaSecondaryUrl}
+                onChange={(e) => setBrief({ ...brief, heroCtaSecondaryUrl: e.target.value })}
+                placeholder="/pages/about"
+              />
+            </Field>
+          </Row>
         </Card>
 
-        <Card title="ヒーロー動画 URL（最大 6 本）" badge="Hero Videos">
+        <Card title="ヒーロー動画 URL（最大 6 本・任意）" badge="Hero Videos">
           <p className="text-sm text-stone-500 -mt-1">
-            Shopify「コンテンツ → ファイル」にアップした mp4 の URL を貼ってください。空欄でも可（Shopify 管理画面側で後から差し替え可能）。
+            Shopify「コンテンツ → ファイル」にアップした mp4 の URL を貼ってください。全部空欄でも OK（その場合ヒーローはタイトルのみ表示・黒背景）。複数本入れると最後まで再生されたら次の動画にサークル状にワイプ切り替えします。音声は常にミュートです。
           </p>
           <div className="grid grid-cols-1 gap-2">
             {brief.heroVideoUrls.map((u, i) => (
@@ -234,76 +281,32 @@ export default function Home() {
           </div>
         </Card>
 
-        <Card title="店舗情報" badge="Store">
-          <Field label="住所">
+        <Card title="商品セクション" badge="Products">
+          <Field label="セクションタイトル">
             <input
               className={input}
-              value={brief.address}
-              onChange={(e) => setBrief({ ...brief, address: e.target.value })}
+              value={brief.productsSectionTitle}
+              onChange={(e) => setBrief({ ...brief, productsSectionTitle: e.target.value })}
             />
           </Field>
-          <Field label="営業時間">
-            <input
-              className={input}
-              value={brief.hours}
-              onChange={(e) => setBrief({ ...brief, hours: e.target.value })}
-            />
-          </Field>
-          <Field label="アクセス（駅からの説明など）">
-            <input
-              className={input}
-              value={brief.access}
-              onChange={(e) => setBrief({ ...brief, access: e.target.value })}
-            />
-          </Field>
-          <Field label="地図検索クエリ（Google Maps 用）" hint="iframe 埋め込みに使われます。住所そのままで OK。">
-            <input
-              className={input}
-              value={brief.mapsQuery}
-              onChange={(e) => setBrief({ ...brief, mapsQuery: e.target.value })}
-            />
-          </Field>
-        </Card>
-
-        <Card title="SNS" badge="Social">
-          <Field label="Instagram（公式）URL">
-            <input
-              className={input + " font-mono text-sm"}
-              value={brief.instagramOfficial}
-              onChange={(e) => setBrief({ ...brief, instagramOfficial: e.target.value })}
-              placeholder="https://www.instagram.com/your_handle/"
-            />
-          </Field>
-          <Field label="Instagram（デリバリー等サブ）URL">
-            <input
-              className={input + " font-mono text-sm"}
-              value={brief.instagramDelivery}
-              onChange={(e) => setBrief({ ...brief, instagramDelivery: e.target.value })}
-              placeholder="https://www.instagram.com/your_handle_delivery/"
-            />
-          </Field>
-        </Card>
-
-        <Card title="ABOUT セクション" badge="About">
-          <Field label="大見出し（ABOUT の太字キャッチ）">
+          <Field label="セクションサブタイトル（任意）">
             <textarea
               className={input}
               rows={2}
-              value={brief.aboutQuote}
-              onChange={(e) => setBrief({ ...brief, aboutQuote: e.target.value })}
-            />
-          </Field>
-          <Field label="本文">
-            <textarea
-              className={input}
-              rows={3}
-              value={brief.aboutBody}
-              onChange={(e) => setBrief({ ...brief, aboutBody: e.target.value })}
+              value={brief.productsSectionSubtitle}
+              onChange={(e) => setBrief({ ...brief, productsSectionSubtitle: e.target.value })}
             />
           </Field>
         </Card>
 
-        <Card title="取り扱いブランド" badge="Brands">
+        <Card title="ブランド（任意）" badge="Brands">
+          <Field label="セクションタイトル">
+            <input
+              className={input}
+              value={brief.brandsSectionTitle}
+              onChange={(e) => setBrief({ ...brief, brandsSectionTitle: e.target.value })}
+            />
+          </Field>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {brief.brands.map((b, i) => (
               <div key={i} className="flex items-center gap-1">
@@ -322,7 +325,61 @@ export default function Home() {
           </button>
         </Card>
 
-        <Card title="FAQ" badge="FAQ">
+        <Card title="ABOUT / 店舗情報" badge="About">
+          <Field label="セクションタイトル">
+            <input
+              className={input}
+              value={brief.aboutSectionTitle}
+              onChange={(e) => setBrief({ ...brief, aboutSectionTitle: e.target.value })}
+            />
+          </Field>
+          <Field label="大見出し（ABOUT の太字キャッチ）">
+            <textarea
+              className={input}
+              rows={2}
+              value={brief.aboutQuote}
+              onChange={(e) => setBrief({ ...brief, aboutQuote: e.target.value })}
+            />
+          </Field>
+          <Field label="本文">
+            <textarea
+              className={input}
+              rows={3}
+              value={brief.aboutBody}
+              onChange={(e) => setBrief({ ...brief, aboutBody: e.target.value })}
+            />
+          </Field>
+          <Field label="住所">
+            <input
+              className={input}
+              value={brief.storeAddress}
+              onChange={(e) => setBrief({ ...brief, storeAddress: e.target.value })}
+            />
+          </Field>
+          <Field label="営業時間">
+            <input
+              className={input}
+              value={brief.storeHours}
+              onChange={(e) => setBrief({ ...brief, storeHours: e.target.value })}
+            />
+          </Field>
+          <Field label="アクセス">
+            <input
+              className={input}
+              value={brief.storeAccess}
+              onChange={(e) => setBrief({ ...brief, storeAccess: e.target.value })}
+            />
+          </Field>
+          <Field label="地図検索クエリ（Google Maps 用、任意）" hint="iframe 埋め込みと『道順』ボタンに使います。住所そのままで OK。">
+            <input
+              className={input}
+              value={brief.storeMapsQuery}
+              onChange={(e) => setBrief({ ...brief, storeMapsQuery: e.target.value })}
+            />
+          </Field>
+        </Card>
+
+        <Card title="FAQ（任意）" badge="FAQ">
           <div className="space-y-3">
             {brief.faqs.map((f, i) => (
               <div key={i} className="rounded-xl bg-stone-50 border border-stone-300 p-3 space-y-2">
@@ -350,27 +407,52 @@ export default function Home() {
           </button>
         </Card>
 
-        <Card title="年齢確認 / フッター" badge="Misc">
+        <Card title="SNS（任意）" badge="Social">
+          <Field label="セクションタイトル">
+            <input
+              className={input}
+              value={brief.socialSectionTitle}
+              onChange={(e) => setBrief({ ...brief, socialSectionTitle: e.target.value })}
+            />
+          </Field>
           <Row>
-            <label className="flex items-center gap-2 text-stone-700">
+            <Field label="Instagram（公式）URL">
               <input
-                type="checkbox"
-                checked={brief.ageGate}
-                onChange={(e) => setBrief({ ...brief, ageGate: e.target.checked })}
-                className="accent-orange-500 scale-125"
+                className={input + " font-mono text-sm"}
+                value={brief.instagramOfficial}
+                onChange={(e) => setBrief({ ...brief, instagramOfficial: e.target.value })}
+                placeholder="https://www.instagram.com/your_handle/"
               />
-              年齢ゲートを表示
-            </label>
-            <Field label="対象年齢（XX 歳以上）">
+            </Field>
+            <Field label="Instagram（公式）ハンドル表示">
               <input
-                type="number"
                 className={input}
-                value={brief.ageMin}
-                onChange={(e) => setBrief({ ...brief, ageMin: Number(e.target.value) || 18 })}
+                value={brief.instagramOfficialHandle}
+                onChange={(e) => setBrief({ ...brief, instagramOfficialHandle: e.target.value })}
+                placeholder="@your_handle"
               />
             </Field>
           </Row>
-          <Field label="フッターのコピーライト 1 行">
+          <Row>
+            <Field label="Instagram（サブ）URL">
+              <input
+                className={input + " font-mono text-sm"}
+                value={brief.instagramSecondary}
+                onChange={(e) => setBrief({ ...brief, instagramSecondary: e.target.value })}
+              />
+            </Field>
+            <Field label="Instagram（サブ）ハンドル表示">
+              <input
+                className={input}
+                value={brief.instagramSecondaryHandle}
+                onChange={(e) => setBrief({ ...brief, instagramSecondaryHandle: e.target.value })}
+              />
+            </Field>
+          </Row>
+        </Card>
+
+        <Card title="フッター" badge="Footer">
+          <Field label="コピーライト行（空なら店舗名）">
             <input
               className={input}
               value={brief.copyrightLine}

@@ -1,4 +1,12 @@
-<div style="max-width:420px;margin:120px auto;padding:0 28px;color:var(--ink)">
-  <h1>LOGIN</h1>
-  {% form 'customer_login' %}<input type="email" name="customer[email]" placeholder="Email" required style="width:100%;background:var(--card);color:var(--ink);border:1px solid var(--line);padding:12px;margin:8px 0"/><input type="password" name="customer[password]" placeholder="Password" required style="width:100%;background:var(--card);color:var(--ink);border:1px solid var(--line);padding:12px;margin:8px 0"/><button type="submit" class="btn primary" style="width:100%">SIGN IN</button>{% endform %}
+<div class="page-wrap" style="max-width:480px">
+  <h1>Login</h1>
+  {% form 'customer_login' %}
+    {{ form.errors | default_errors }}
+    <label style="display:block;margin:12px 0 4px">Email</label>
+    <input type="email" name="customer[email]" required style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px"/>
+    <label style="display:block;margin:12px 0 4px">Password</label>
+    <input type="password" name="customer[password]" required style="width:100%;padding:12px;border:1px solid var(--line);border-radius:8px"/>
+    <button type="submit" class="btn btn--primary" style="margin-top:20px;width:100%">Sign In</button>
+  {% endform %}
+  <p style="margin-top:16px"><a href="{{ routes.account_register_url }}" style="color:var(--accent)">Create account</a></p>
 </div>

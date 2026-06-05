@@ -1,17 +1,17 @@
-<a class="card" href="{{ product.url }}">
-  {%- if product.available == false -%}
-    <span class="badge sold">SOLD OUT</span>
-  {%- elsif product.compare_at_price > product.price -%}
-    <span class="badge sale">SALE</span>
-  {%- endif -%}
-  <div class="thumb">
+<a class="product-card" href="{{ product.url }}">
+  <div class="product-card__thumb">
+    {%- if product.available == false -%}
+      <span class="product-card__badge product-card__badge--sold">SOLD OUT</span>
+    {%- elsif product.compare_at_price > product.price -%}
+      <span class="product-card__badge product-card__badge--sale">SALE</span>
+    {%- endif -%}
     {%- if product.featured_image -%}
       <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" loading="lazy" width="600" height="600"/>
     {%- endif -%}
   </div>
-  <div class="meta">
-    <div class="name">{{ product.title }}</div>
-    <div class="price">
+  <div class="product-card__meta">
+    <div class="product-card__name">{{ product.title }}</div>
+    <div class="product-card__price">
       {%- if product.compare_at_price > product.price -%}
         <s>{{ product.compare_at_price | money }}</s>
       {%- endif -%}

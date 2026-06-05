@@ -1,0 +1,6 @@
+{
+  "general": {
+    "search": { "placeholder": "Search", "submit": "Search", "no_results": "No results." },
+    "cart": { "title": "Cart", "empty": "Your cart is empty." }
+  }
+}

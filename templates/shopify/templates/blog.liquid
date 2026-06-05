@@ -1,4 +1,12 @@
-<div style="max-width:900px;margin:120px auto;padding:0 28px;color:var(--ink)">
+<div class="page-wrap">
   <h1>{{ blog.title }}</h1>
-  {% for article in blog.articles %}<article style="border-bottom:1px solid var(--line);padding:18px 0"><a href="{{ article.url }}" style="color:var(--ink);font-weight:700">{{ article.title }}</a><div style="color:var(--ink-dim);font-size:13px">{{ article.published_at | date: '%Y.%m.%d' }}</div></article>{% endfor %}
+  {% for article in blog.articles %}
+    <article style="border-bottom:1px solid var(--line);padding:20px 0">
+      <a href="{{ article.url }}" style="font-weight:700;font-size:18px;color:var(--ink)">{{ article.title }}</a>
+      <div style="color:var(--ink-dim);font-size:13px;margin-top:4px">{{ article.published_at | date: '%Y.%m.%d' }}</div>
+      {%- if article.excerpt != blank -%}
+        <div style="color:var(--ink-dim);margin-top:8px">{{ article.excerpt }}</div>
+      {%- endif -%}
+    </article>
+  {% endfor %}
 </div>

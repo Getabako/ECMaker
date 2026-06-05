@@ -1,9 +1,15 @@
-<div style="max-width:1200px;margin:120px auto;padding:0 28px;color:var(--ink)">
-  <h1 style="font-size:clamp(28px,4vw,52px)">SEARCH</h1>
-  <form action="{{ routes.search_url }}" method="get" style="margin:24px 0"><input name="q" value="{{ search.terms | escape }}" style="background:var(--card);color:var(--ink);border:1px solid var(--line);padding:12px 18px;width:300px"/></form>
-  {% if search.performed %}<p style="color:var(--ink-dim)">{{ search.results_count }} results</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px">
-      {% for item in search.results %}{% if item.object_type == 'product' %}{% render 'product-card', product: item %}{% endif %}{% endfor %}
+<div class="page-wrap page-wrap--wide">
+  <h1>Search</h1>
+  <form action="{{ routes.search_url }}" method="get" style="margin:24px 0">
+    <input name="q" value="{{ search.terms | escape }}" placeholder="Search…" style="padding:12px 18px;border:1px solid var(--line);border-radius:8px;width:100%;max-width:400px"/>
+    <button type="submit" class="btn btn--primary" style="margin-left:8px">Search</button>
+  </form>
+  {% if search.performed %}
+    <p style="color:var(--ink-dim)">{{ search.results_count }} results</p>
+    <div class="product-grid">
+      {% for item in search.results %}
+        {% if item.object_type == 'product' %}{% render 'product-card', product: item %}{% endif %}
+      {% endfor %}
     </div>
   {% endif %}
 </div>

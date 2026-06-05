@@ -2,25 +2,32 @@
 <html lang="{{ shop.locale }}">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>{% if template == 'index' %}{{ shop.name }} — UNDERGROUND CBD SHOP{% else %}{{ page_title }}{% if page_title != shop.name %} — {{ shop.name }}{% endif %}{% endif %}</title>
-<meta name="description" content="{% if page_description != blank %}{{ page_description | escape }}{% else %}新潟駅から3分。日本一ピースなCBDショップ。Neo plus AID。{% endif %}" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="{{ settings.accent_color | default: '#1a3a5c' }}" />
+<title>{% if template == 'index' %}{{ shop.name }}{% if settings.shop_tagline != blank %} — {{ settings.shop_tagline }}{% endif %}{% else %}{{ page_title }}{% if page_title != shop.name %} — {{ shop.name }}{% endif %}{% endif %}</title>
+<meta name="description" content="{% if page_description != blank %}{{ page_description | escape }}{% else %}{{ settings.shop_description | default: shop.name | escape }}{% endif %}" />
 <link rel="canonical" href="{{ canonical_url }}" />
-<link rel="preload" as="image" href="{{ 'delivery-banner.jpg' | asset_url }}" />
+{%- if settings.favicon != blank -%}
+  <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64 }}" />
+{%- endif -%}
+<style>
+  :root {
+    --accent: {{ settings.accent_color | default: '#1a3a5c' }};
+    --accent-ink: #ffffff;
+    --ink: #1a1a1a;
+    --ink-dim: #555555;
+    --line: #e5e5e5;
+    --bg: #ffffff;
+    --bg-soft: #f7f7f7;
+    --card: #ffffff;
+    --radius: 12px;
+    --maxw: 1200px;
+  }
+</style>
 {{ 'theme.css' | asset_url | stylesheet_tag }}
 <script>
   (function(){
-    // Hard-coded defaults — these are the 6 Shopify Files video URLs.
-    // Theme-setting URLs below override these per-slot if you fill them in.
     var defaults = [
-      "https://cdn.shopify.com/videos/c/o/v/ba179035550d4870a8f6364ea65179ee.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/200276f068a247439eae4b463b924674.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/e00531824d344b9a8f8e58cfbfa54d6f.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/dbd8211a3c0043b696885b92996b1121.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/ee23d6d7fe8a43978cf6ade83b8f1b80.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/02739b1e76e24400a14edaddf5b58c70.mp4"
-    ];
-    var overrides = [
       {{ settings.hero_video_url_1 | json }},
       {{ settings.hero_video_url_2 | json }},
       {{ settings.hero_video_url_3 | json }},
@@ -29,17 +36,97 @@
       {{ settings.hero_video_url_6 | json }}
     ];
     var urls = [];
-    for(var i = 0; i < 6; i++){
-      var u = (overrides[i] && overrides[i].length > 0) ? overrides[i] : defaults[i];
-      if(u) urls.push(u);
+    for (var i = 0; i < defaults.length; i++) {
+      if (defaults[i] && defaults[i].length > 0) urls.push(defaults[i]);
     }
-    window.NEO_VIDEOS = urls;
+    window.SHOP_HERO_VIDEOS = urls;
   })();
 </script>
 {{ content_for_header }}
 </head>
-<body>
+<body class="template-{{ template | replace: '.', '-' }}">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" role="banner">
+  <div class="site-header__inner">
+    <a class="site-header__brand" href="{{ routes.root_url }}">
+      {%- if settings.logo != blank -%}
+        <img src="{{ settings.logo | image_url: width: 240 }}" alt="{{ shop.name | escape }}" height="32" />
+      {%- else -%}
+        <span>{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <ul>
+        {%- for link in linklists.main-menu.links -%}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {%- else -%}
+          <li><a href="{{ routes.collections_url }}/all">Shop</a></li>
+          <li><a href="{{ routes.root_url }}pages/about">About</a></li>
+          <li><a href="{{ routes.root_url }}pages/contact">Contact</a></li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+    <div class="site-header__actions">
+      <a class="site-header__search" href="{{ routes.search_url }}" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </a>
+      <a class="site-header__cart" href="{{ routes.cart_url }}" aria-label="Cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M6 6 5 3H2"/></svg>
+        <span class="cart-count">{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="main" role="main">
 {{ content_for_layout }}
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="site-footer__inner">
+    <div class="site-footer__col">
+      <div class="site-footer__brand">{{ shop.name }}</div>
+      {%- if settings.shop_description != blank -%}
+        <p class="site-footer__desc">{{ settings.shop_description }}</p>
+      {%- endif -%}
+    </div>
+    <div class="site-footer__col">
+      <div class="site-footer__head">SHOP</div>
+      <ul>
+        <li><a href="{{ routes.collections_url }}/all">All Products</a></li>
+        <li><a href="{{ routes.cart_url }}">Cart</a></li>
+        <li><a href="{{ routes.search_url }}">Search</a></li>
+      </ul>
+    </div>
+    <div class="site-footer__col">
+      <div class="site-footer__head">INFO</div>
+      <ul>
+        <li><a href="{{ routes.root_url }}pages/about">About</a></li>
+        <li><a href="{{ routes.root_url }}pages/contact">Contact</a></li>
+        <li><a href="{{ routes.root_url }}policies/terms-of-service">Terms</a></li>
+        <li><a href="{{ routes.root_url }}policies/privacy-policy">Privacy</a></li>
+      </ul>
+    </div>
+    {%- if settings.instagram_official != blank or settings.instagram_secondary != blank -%}
+    <div class="site-footer__col">
+      <div class="site-footer__head">FOLLOW</div>
+      <ul>
+        {%- if settings.instagram_official != blank -%}
+          <li><a href="{{ settings.instagram_official }}" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        {%- endif -%}
+        {%- if settings.instagram_secondary != blank -%}
+          <li><a href="{{ settings.instagram_secondary }}" target="_blank" rel="noopener noreferrer">Instagram (Sub)</a></li>
+        {%- endif -%}
+      </ul>
+    </div>
+    {%- endif -%}
+  </div>
+  <div class="site-footer__legal">
+    © {{ 'now' | date: '%Y' }} {{ settings.copyright_line | default: shop.name }}
+  </div>
+</footer>
+
 <script src="{{ 'theme.js' | asset_url }}" defer></script>
 </body>
 </html>

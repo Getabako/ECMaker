@@ -1,4 +1,18 @@
-<div style="max-width:1200px;margin:120px auto;padding:0 28px;color:var(--ink)">
-  <h1>COLLECTIONS</h1>
-  <ul style="list-style:none;padding:0">{% for c in collections %}<li><a href="{{ c.url }}" style="color:var(--ink)">{{ c.title }} ({{ c.products_count }})</a></li>{% endfor %}</ul>
+<div class="page-wrap page-wrap--wide">
+  <h1>Collections</h1>
+  <div class="product-grid">
+    {% for c in collections %}
+      <a class="product-card" href="{{ c.url }}">
+        <div class="product-card__thumb">
+          {%- if c.image -%}
+            <img src="{{ c.image | image_url: width: 600 }}" alt="{{ c.title | escape }}" loading="lazy"/>
+          {%- endif -%}
+        </div>
+        <div class="product-card__meta">
+          <div class="product-card__name">{{ c.title }}</div>
+          <div class="product-card__price">{{ c.products_count }} items</div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
 </div>

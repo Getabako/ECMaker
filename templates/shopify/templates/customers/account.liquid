@@ -1,6 +1,26 @@
-<div style="max-width:760px;margin:120px auto;padding:0 28px;color:var(--ink)">
-  <h1>ACCOUNT</h1>
-  <p>Hi, {{ customer.first_name | default: customer.email }}.</p>
-  <ul>{% for order in customer.orders %}<li><a href="{{ order.customer_url }}" style="color:var(--acid)">{{ order.name }}</a> — {{ order.created_at | date: '%Y.%m.%d' }} — {{ order.total_price | money }}</li>{% endfor %}</ul>
-  <a class="btn" href="{{ routes.account_logout_url }}">LOGOUT</a>
+<div class="page-wrap">
+  <h1>My Account</h1>
+  <p>Welcome, {{ customer.name }}.</p>
+  <p><a href="{{ routes.account_addresses_url }}" style="color:var(--accent)">Addresses</a> · <a href="{{ routes.account_logout_url }}" style="color:var(--accent)">Log out</a></p>
+  <h2 style="margin-top:32px;font-size:20px">Order History</h2>
+  {% if customer.orders.size > 0 %}
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="text-align:left;border-bottom:1px solid var(--line)">
+          <th style="padding:8px">Order</th><th style="padding:8px">Date</th><th style="padding:8px">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in customer.orders %}
+          <tr style="border-bottom:1px solid var(--line)">
+            <td style="padding:8px"><a href="{{ order.customer_url }}" style="color:var(--accent)">{{ order.name }}</a></td>
+            <td style="padding:8px">{{ order.created_at | date: '%Y.%m.%d' }}</td>
+            <td style="padding:8px">{{ order.total_price | money }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="color:var(--ink-dim)">No orders yet.</p>
+  {% endif %}
 </div>

@@ -1,4 +1,13 @@
-<div style="max-width:760px;margin:120px auto;padding:0 28px;color:var(--ink)">
-  <h1>ADDRESSES</h1>
-  {% for addr in customer.addresses %}<div style="border:1px solid var(--line);padding:18px;margin-bottom:18px">{{ addr | format_address }}</div>{% endfor %}
+<div class="page-wrap">
+  <h1>Addresses</h1>
+  <p><a href="{{ routes.account_url }}" style="color:var(--accent)">← Back to account</a></p>
+  {% for address in customer.addresses %}
+    <div style="border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:12px 0">
+      <div>{{ address.first_name }} {{ address.last_name }}</div>
+      <div>{{ address.address1 }}</div>
+      {%- if address.address2 != blank -%}<div>{{ address.address2 }}</div>{%- endif -%}
+      <div>{{ address.city }} {{ address.province_code }} {{ address.zip }}</div>
+      <div>{{ address.country }}</div>
+    </div>
+  {% endfor %}
 </div>
