@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="{{ settings.accent_color | default: '#1a3a5c' }}" />
-<title>{% if template == 'index' %}{{ shop.name }}{% if settings.shop_tagline != blank %} — {{ settings.shop_tagline }}{% endif %}{% else %}{{ page_title }}{% if page_title != shop.name %} — {{ shop.name }}{% endif %}{% endif %}</title>
-<meta name="description" content="{% if page_description != blank %}{{ page_description | escape }}{% else %}{{ settings.shop_description | default: shop.name | escape }}{% endif %}" />
+<meta name="theme-color" content="__ECM_ACCENT_COLOR__" />
+<title>{% if template == 'index' %}__ECM_SHOP_NAME__{% if '__ECM_SHOP_TAGLINE__' != '' %} — __ECM_SHOP_TAGLINE__{% endif %}{% else %}{{ page_title }}{% if page_title != shop.name %} — __ECM_SHOP_NAME__{% endif %}{% endif %}</title>
+<meta name="description" content="{% if page_description != blank %}{{ page_description | escape }}{% else %}__ECM_SHOP_DESCRIPTION__{% endif %}" />
 <link rel="canonical" href="{{ canonical_url }}" />
 {%- if settings.favicon != blank -%}
   <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64 }}" />
 {%- endif -%}
 <style>
   :root {
-    --accent: {{ settings.accent_color | default: '#1a3a5c' }};
+    --accent: __ECM_ACCENT_COLOR__;
     --accent-ink: #ffffff;
     --ink: #1a1a1a;
     --ink-dim: #555555;
@@ -26,21 +26,13 @@
 </style>
 {{ 'theme.css' | asset_url | stylesheet_tag }}
 <script>
-  (function(){
-    var defaults = [
-      {{ settings.hero_video_url_1 | json }},
-      {{ settings.hero_video_url_2 | json }},
-      {{ settings.hero_video_url_3 | json }},
-      {{ settings.hero_video_url_4 | json }},
-      {{ settings.hero_video_url_5 | json }},
-      {{ settings.hero_video_url_6 | json }}
-    ];
-    var urls = [];
-    for (var i = 0; i < defaults.length; i++) {
-      if (defaults[i] && defaults[i].length > 0) urls.push(defaults[i]);
-    }
-    window.SHOP_HERO_VIDEOS = urls;
-  })();
+  // ECMaker-baked hero/section data (all sentinels filled at theme build).
+  window.ECM = {
+    heroType: "__ECM_HERO_TYPE__",
+    heroSlider: __ECM_HERO_SLIDER_JSON__,
+    heroSliderIntervalMs: __ECM_HERO_SLIDER_INTERVAL_MS__,
+    heroVideos: __ECM_HERO_VIDEO_JSON__
+  };
 </script>
 {{ content_for_header }}
 </head>
@@ -51,9 +43,9 @@
   <div class="site-header__inner">
     <a class="site-header__brand" href="{{ routes.root_url }}">
       {%- if settings.logo != blank -%}
-        <img src="{{ settings.logo | image_url: width: 240 }}" alt="{{ shop.name | escape }}" height="32" />
+        <img src="{{ settings.logo | image_url: width: 240 }}" alt="__ECM_SHOP_NAME_ESC__" height="32" />
       {%- else -%}
-        <span>{{ shop.name }}</span>
+        <span>__ECM_SHOP_NAME__</span>
       {%- endif -%}
     </a>
     <nav class="site-nav" aria-label="Primary">
@@ -86,10 +78,10 @@
 <footer class="site-footer" role="contentinfo">
   <div class="site-footer__inner">
     <div class="site-footer__col">
-      <div class="site-footer__brand">{{ shop.name }}</div>
-      {%- if settings.shop_description != blank -%}
-        <p class="site-footer__desc">{{ settings.shop_description }}</p>
-      {%- endif -%}
+      <div class="site-footer__brand">__ECM_SHOP_NAME__</div>
+      {% if '__ECM_SHOP_DESCRIPTION__' != '' %}
+        <p class="site-footer__desc">__ECM_SHOP_DESCRIPTION__</p>
+      {% endif %}
     </div>
     <div class="site-footer__col">
       <div class="site-footer__head">SHOP</div>
@@ -108,22 +100,22 @@
         <li><a href="{{ routes.root_url }}policies/privacy-policy">Privacy</a></li>
       </ul>
     </div>
-    {%- if settings.instagram_official != blank or settings.instagram_secondary != blank -%}
+    {% if '__ECM_INSTAGRAM_OFFICIAL__' != '' or '__ECM_INSTAGRAM_SECONDARY__' != '' %}
     <div class="site-footer__col">
       <div class="site-footer__head">FOLLOW</div>
       <ul>
-        {%- if settings.instagram_official != blank -%}
-          <li><a href="{{ settings.instagram_official }}" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-        {%- endif -%}
-        {%- if settings.instagram_secondary != blank -%}
-          <li><a href="{{ settings.instagram_secondary }}" target="_blank" rel="noopener noreferrer">Instagram (Sub)</a></li>
-        {%- endif -%}
+        {% if '__ECM_INSTAGRAM_OFFICIAL__' != '' %}
+          <li><a href="__ECM_INSTAGRAM_OFFICIAL__" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        {% endif %}
+        {% if '__ECM_INSTAGRAM_SECONDARY__' != '' %}
+          <li><a href="__ECM_INSTAGRAM_SECONDARY__" target="_blank" rel="noopener noreferrer">Instagram (Sub)</a></li>
+        {% endif %}
       </ul>
     </div>
-    {%- endif -%}
+    {% endif %}
   </div>
   <div class="site-footer__legal">
-    © {{ 'now' | date: '%Y' }} {{ settings.copyright_line | default: shop.name }}
+    © {{ 'now' | date: '%Y' }} __ECM_COPYRIGHT_LINE__
   </div>
 </footer>
 

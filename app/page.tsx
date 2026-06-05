@@ -4,11 +4,14 @@ import { useState } from "react";
 
 type Faq = { q: string; a: string };
 
+type HeroType = "image" | "slider" | "video-single" | "video-multi";
+
 type Brief = {
   shopName: string;
   shopTagline: string;
   description: string;
   accentColor: string;
+  heroType: HeroType;
   heroEyebrow: string;
   heroHeadline: string;
   heroSubtitle: string;
@@ -16,6 +19,9 @@ type Brief = {
   heroCtaPrimaryUrl: string;
   heroCtaSecondaryLabel: string;
   heroCtaSecondaryUrl: string;
+  heroImageUrl: string;
+  heroSliderImages: string[];
+  heroSliderIntervalSec: number;
   heroVideoUrls: string[];
   productsSectionTitle: string;
   productsSectionSubtitle: string;
@@ -42,6 +48,7 @@ const INITIAL: Brief = {
   shopTagline: "",
   description: "",
   accentColor: "#1a3a5c",
+  heroType: "image",
   heroEyebrow: "",
   heroHeadline: "Welcome to My Shop",
   heroSubtitle: "厳選した商品をお届けします。",
@@ -49,6 +56,9 @@ const INITIAL: Brief = {
   heroCtaPrimaryUrl: "",
   heroCtaSecondaryLabel: "About",
   heroCtaSecondaryUrl: "/pages/about",
+  heroImageUrl: "",
+  heroSliderImages: ["", "", "", "", "", ""],
+  heroSliderIntervalSec: 6,
   heroVideoUrls: ["", "", "", "", "", ""],
   productsSectionTitle: "Products",
   productsSectionSubtitle: "",
@@ -106,6 +116,12 @@ export default function Home() {
     setBrief({ ...brief, heroVideoUrls: next });
   };
 
+  const updateSliderImg = (i: number, v: string) => {
+    const next = [...brief.heroSliderImages];
+    next[i] = v;
+    setBrief({ ...brief, heroSliderImages: next });
+  };
+
   const submit = async () => {
     setPhase("generating");
     setError(null);
@@ -116,6 +132,8 @@ export default function Home() {
       ...brief,
       brands: brief.brands.map((s) => s.trim()).filter(Boolean),
       faqs: brief.faqs.filter((f) => f.q.trim() && f.a.trim()),
+      heroImageUrl: brief.heroImageUrl.trim(),
+      heroSliderImages: brief.heroSliderImages.map((s) => s.trim()),
       heroVideoUrls: brief.heroVideoUrls.map((s) => s.trim()),
     };
 
@@ -202,6 +220,33 @@ export default function Home() {
         </Card>
 
         <Card title="ヒーロー" badge="Hero">
+          <Field label="ヒーロータイプ">
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  ["image", "静止画像"],
+                  ["slider", "画像スライダー"],
+                  ["video-single", "動画（1本ループ）"],
+                  ["video-multi", "動画（複数・サークルワイプ）"],
+                ] as [HeroType, string][]
+              ).map(([val, label]) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setBrief({ ...brief, heroType: val })}
+                  className={
+                    "px-4 py-2 rounded-full border text-sm font-medium transition " +
+                    (brief.heroType === val
+                      ? "bg-gradient-to-r from-orange-500 to-red-500 text-white border-transparent shadow-sm"
+                      : "bg-white border-stone-300 text-stone-700 hover:bg-stone-50")
+                  }
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </Field>
+
           <Field label="ヒーロー上の小見出し（任意）">
             <input
               className={input}
@@ -262,24 +307,90 @@ export default function Home() {
           </Row>
         </Card>
 
-        <Card title="ヒーロー動画 URL（最大 6 本・任意）" badge="Hero Videos">
-          <p className="text-sm text-stone-500 -mt-1">
-            Shopify「コンテンツ → ファイル」にアップした mp4 の URL を貼ってください。全部空欄でも OK（その場合ヒーローはタイトルのみ表示・黒背景）。複数本入れると最後まで再生されたら次の動画にサークル状にワイプ切り替えします。音声は常にミュートです。
-          </p>
-          <div className="grid grid-cols-1 gap-2">
-            {brief.heroVideoUrls.map((u, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="w-8 text-stone-500 text-sm">{i + 1}.</span>
-                <input
-                  className={input + " font-mono text-sm"}
-                  value={u}
-                  onChange={(e) => updateVideo(i, e.target.value)}
-                  placeholder="https://cdn.shopify.com/videos/c/o/v/xxxxx.mp4"
-                />
-              </div>
-            ))}
-          </div>
-        </Card>
+        {brief.heroType === "image" && (
+          <Card title="ヒーロー画像" badge="Hero Image">
+            <p className="text-sm text-stone-500 -mt-1">
+              全画面ヒーロー用の画像 URL。空欄なら汎用的なフリー画像が当たります。
+            </p>
+            <Field label="画像 URL">
+              <input
+                className={input + " font-mono text-sm"}
+                value={brief.heroImageUrl}
+                onChange={(e) => setBrief({ ...brief, heroImageUrl: e.target.value })}
+                placeholder="https://cdn.shopify.com/s/files/.../hero.jpg"
+              />
+            </Field>
+          </Card>
+        )}
+
+        {brief.heroType === "slider" && (
+          <Card title="ヒーロー画像スライダー（最大 6 枚）" badge="Hero Slider">
+            <p className="text-sm text-stone-500 -mt-1">
+              指定の間隔でフェードして切り替わります。1 枚以上で動作（2 枚未満なら静止画像扱い）。
+            </p>
+            <Field label="切り替え間隔（秒）">
+              <input
+                type="number"
+                min={2}
+                max={60}
+                className={input + " w-32"}
+                value={brief.heroSliderIntervalSec}
+                onChange={(e) =>
+                  setBrief({
+                    ...brief,
+                    heroSliderIntervalSec: Math.max(2, Number(e.target.value) || 6),
+                  })
+                }
+              />
+            </Field>
+            <div className="grid grid-cols-1 gap-2">
+              {brief.heroSliderImages.map((u, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="w-8 text-stone-500 text-sm">{i + 1}.</span>
+                  <input
+                    className={input + " font-mono text-sm"}
+                    value={u}
+                    onChange={(e) => updateSliderImg(i, e.target.value)}
+                    placeholder="https://cdn.shopify.com/s/files/.../slide.jpg"
+                  />
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {(brief.heroType === "video-single" || brief.heroType === "video-multi") && (
+          <Card
+            title={
+              brief.heroType === "video-single"
+                ? "ヒーロー動画（1 本ループ）"
+                : "ヒーロー動画（最大 6 本・サークルワイプ）"
+            }
+            badge="Hero Video"
+          >
+            <p className="text-sm text-stone-500 -mt-1">
+              Shopify「コンテンツ → ファイル」にアップした mp4 の URL を貼ってください。音声は常にミュートです。
+              {brief.heroType === "video-single"
+                ? " 1 本目だけが使われ、ループ再生されます。"
+                : " 最後まで再生されたら次の動画にサークル状にワイプ切り替えします。"}
+            </p>
+            <div className="grid grid-cols-1 gap-2">
+              {brief.heroVideoUrls
+                .slice(0, brief.heroType === "video-single" ? 1 : 6)
+                .map((u, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="w-8 text-stone-500 text-sm">{i + 1}.</span>
+                    <input
+                      className={input + " font-mono text-sm"}
+                      value={u}
+                      onChange={(e) => updateVideo(i, e.target.value)}
+                      placeholder="https://cdn.shopify.com/videos/c/o/v/xxxxx.mp4"
+                    />
+                  </div>
+                ))}
+            </div>
+          </Card>
+        )}
 
         <Card title="商品セクション" badge="Products">
           <Field label="セクションタイトル">

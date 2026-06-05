@@ -1,35 +1,55 @@
+{%- comment -%}
+  Hero markup branches on the ECMaker-baked hero type.
+  Possible values: image | slider | video-single | video-multi
+  All merchant copy is pre-baked via __ECM_*__ sentinels.
+{%- endcomment -%}
+
+{%- assign ecm_hero_type = '__ECM_HERO_TYPE__' -%}
+
 <!-- HERO -->
-<section class="hero" aria-label="Hero">
+<section class="hero hero--{{ ecm_hero_type }}" aria-label="Hero">
   <div class="hero__media" aria-hidden="true">
-    <video class="hero__video hero__video--a" id="heroVideoA" muted playsinline autoplay preload="auto"></video>
-    <video class="hero__video hero__video--b" id="heroVideoB" muted playsinline preload="auto"></video>
-    <div class="hero__wipe" id="heroWipe"></div>
+    {%- if ecm_hero_type == 'image' -%}
+      <img class="hero__image" src="__ECM_HERO_IMAGE_URL__" alt="" />
+    {%- elsif ecm_hero_type == 'slider' -%}
+      <div class="hero__slider" id="heroSlider">
+        <img class="hero__slide is-active" src="__ECM_HERO_SLIDER_FIRST__" alt="" />
+      </div>
+    {%- elsif ecm_hero_type == 'video-single' -%}
+      <video class="hero__video hero__video--single" id="heroVideoSingle"
+             src="__ECM_HERO_VIDEO_FIRST__"
+             muted playsinline autoplay loop preload="auto"></video>
+    {%- elsif ecm_hero_type == 'video-multi' -%}
+      <video class="hero__video hero__video--a" id="heroVideoA" muted playsinline autoplay preload="auto"></video>
+      <video class="hero__video hero__video--b" id="heroVideoB" muted playsinline preload="auto"></video>
+    {%- endif -%}
     <div class="hero__overlay"></div>
   </div>
 
-  <button class="hero__nav hero__nav--prev" id="heroPrev" aria-label="Previous">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18 9 12l6-6"/></svg>
-  </button>
-  <button class="hero__nav hero__nav--next" id="heroNext" aria-label="Next">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-  </button>
+  {%- if ecm_hero_type == 'video-multi' -%}
+    <button class="hero__nav hero__nav--prev" id="heroPrev" aria-label="Previous">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18 9 12l6-6"/></svg>
+    </button>
+    <button class="hero__nav hero__nav--next" id="heroNext" aria-label="Next">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  {%- endif -%}
 
   <div class="hero__copy">
-    {%- if settings.hero_eyebrow != blank -%}
-      <div class="hero__eyebrow">{{ settings.hero_eyebrow }}</div>
+    {%- assign hero_eyebrow = '__ECM_HERO_EYEBROW__' -%}
+    {%- if hero_eyebrow != blank -%}
+      <div class="hero__eyebrow">{{ hero_eyebrow }}</div>
     {%- endif -%}
-    <h1 class="hero__title">{{ settings.hero_headline | default: shop.name }}</h1>
-    {%- if settings.hero_subtitle != blank -%}
-      <p class="hero__sub">{{ settings.hero_subtitle }}</p>
+    <h1 class="hero__title">__ECM_HERO_HEADLINE__</h1>
+    {%- assign hero_sub = '__ECM_HERO_SUBTITLE__' -%}
+    {%- if hero_sub != blank -%}
+      <p class="hero__sub">{{ hero_sub }}</p>
     {%- endif -%}
     <div class="hero__ctas">
-      <a class="btn btn--primary" href="{{ settings.hero_cta_primary_url | default: routes.collections_url | append: '/all' }}">
-        {{ settings.hero_cta_primary_label | default: 'SHOP NOW' }}
-      </a>
-      {%- if settings.hero_cta_secondary_label != blank -%}
-        <a class="btn btn--ghost" href="{{ settings.hero_cta_secondary_url | default: '#about' }}">
-          {{ settings.hero_cta_secondary_label }}
-        </a>
+      <a class="btn btn--primary" href="__ECM_HERO_CTA_PRIMARY_URL__">__ECM_HERO_CTA_PRIMARY_LABEL__</a>
+      {%- assign cta2_label = '__ECM_HERO_CTA_SECONDARY_LABEL__' -%}
+      {%- if cta2_label != blank -%}
+        <a class="btn btn--ghost" href="__ECM_HERO_CTA_SECONDARY_URL__">{{ cta2_label }}</a>
       {%- endif -%}
     </div>
   </div>
@@ -38,9 +58,10 @@
 <!-- PRODUCTS -->
 <section class="section" id="shop">
   <div class="section__head">
-    <h2 class="section__title">{{ settings.products_section_title | default: 'Products' }}</h2>
-    {%- if settings.products_section_subtitle != blank -%}
-      <p class="section__sub">{{ settings.products_section_subtitle }}</p>
+    <h2 class="section__title">__ECM_PRODUCTS_TITLE__</h2>
+    {%- assign prod_sub = '__ECM_PRODUCTS_SUBTITLE__' -%}
+    {%- if prod_sub != blank -%}
+      <p class="section__sub">{{ prod_sub }}</p>
     {%- endif -%}
   </div>
 
@@ -60,99 +81,85 @@
 </section>
 
 <!-- BRANDS -->
-{%- assign brands_text = settings.brands_list | default: '' -%}
-{%- if brands_text != blank -%}
-<section class="section section--soft" id="brands">
+<section class="section section--soft ecm-brands" id="brands" data-brands="__ECM_BRANDS_JSON__">
   <div class="section__head">
-    <h2 class="section__title">{{ settings.brands_section_title | default: 'Brands' }}</h2>
+    <h2 class="section__title">__ECM_BRANDS_TITLE__</h2>
   </div>
-  <div class="brand-grid">
-    {%- assign brand_items = brands_text | split: ',' -%}
-    {%- for b in brand_items -%}
-      <div class="brand-grid__item">{{ b | strip }}</div>
-    {%- endfor -%}
-  </div>
+  <div class="brand-grid" id="ecmBrandGrid"></div>
 </section>
-{%- endif -%}
 
 <!-- ABOUT / STORE -->
 <section class="section about" id="about">
   <div class="about__copy">
     <div class="section__head">
-      <h2 class="section__title">{{ settings.about_section_title | default: 'About' }}</h2>
+      <h2 class="section__title">__ECM_ABOUT_TITLE__</h2>
     </div>
-    {%- if settings.about_quote != blank -%}
-      <p class="about__quote">{{ settings.about_quote }}</p>
+    {%- assign about_quote = '__ECM_ABOUT_QUOTE__' -%}
+    {%- if about_quote != blank -%}
+      <p class="about__quote">{{ about_quote }}</p>
     {%- endif -%}
-    {%- if settings.about_body != blank -%}
-      <p class="about__body">{{ settings.about_body }}</p>
+    {%- assign about_body = '__ECM_ABOUT_BODY__' -%}
+    {%- if about_body != blank -%}
+      <p class="about__body">{{ about_body }}</p>
     {%- endif -%}
 
     <dl class="about__info">
-      {%- if settings.store_address != blank -%}
-        <div><dt>Address</dt><dd>{{ settings.store_address }}</dd></div>
+      {%- assign addr = '__ECM_STORE_ADDRESS__' -%}
+      {%- if addr != blank -%}
+        <div><dt>Address</dt><dd>{{ addr }}</dd></div>
       {%- endif -%}
-      {%- if settings.store_hours != blank -%}
-        <div><dt>Hours</dt><dd>{{ settings.store_hours }}</dd></div>
+      {%- assign hours = '__ECM_STORE_HOURS__' -%}
+      {%- if hours != blank -%}
+        <div><dt>Hours</dt><dd>{{ hours }}</dd></div>
       {%- endif -%}
-      {%- if settings.store_access != blank -%}
-        <div><dt>Access</dt><dd>{{ settings.store_access }}</dd></div>
+      {%- assign access = '__ECM_STORE_ACCESS__' -%}
+      {%- if access != blank -%}
+        <div><dt>Access</dt><dd>{{ access }}</dd></div>
       {%- endif -%}
     </dl>
 
     <div class="about__ctas">
       <a class="btn btn--primary" href="{{ routes.root_url }}pages/contact">Contact</a>
-      {%- if settings.store_maps_query != blank -%}
-        <a class="btn btn--ghost" href="https://www.google.com/maps/dir/?api=1&destination={{ settings.store_maps_query | url_encode }}" target="_blank" rel="noopener noreferrer">Get Directions</a>
+      {%- assign maps_q = '__ECM_STORE_MAPS_QUERY__' -%}
+      {%- if maps_q != blank -%}
+        <a class="btn btn--ghost" href="https://www.google.com/maps/dir/?api=1&destination={{ maps_q | url_encode }}" target="_blank" rel="noopener noreferrer">Get Directions</a>
       {%- endif -%}
     </div>
   </div>
 
   <div class="about__side">
-    {%- if settings.store_maps_query != blank -%}
+    {%- if maps_q != blank -%}
       <div class="about__map">
         <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-          src="https://www.google.com/maps?q={{ settings.store_maps_query | url_encode }}&output=embed"
+          src="https://www.google.com/maps?q={{ maps_q | url_encode }}&output=embed"
           title="Map"></iframe>
       </div>
     {%- endif -%}
 
-    {%- assign faq_text = settings.faq_list | default: '' -%}
-    {%- if faq_text != blank -%}
-      <div class="faq">
-        {%- assign faq_items = faq_text | split: '|' -%}
-        {%- for item in faq_items -%}
-          {%- assign parts = item | split: '::' -%}
-          {%- if parts.size >= 2 -%}
-            <details>
-              <summary>{{ parts[0] | strip }}</summary>
-              <p>{{ parts[1] | strip }}</p>
-            </details>
-          {%- endif -%}
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
+    <div class="faq ecm-faq" id="ecmFaq" data-faqs="__ECM_FAQS_JSON__"></div>
   </div>
 </section>
 
 <!-- SOCIAL -->
-{%- if settings.instagram_official != blank or settings.instagram_secondary != blank -%}
+{%- assign insta_off = '__ECM_INSTAGRAM_OFFICIAL__' -%}
+{%- assign insta_sub = '__ECM_INSTAGRAM_SECONDARY__' -%}
+{%- if insta_off != blank or insta_sub != blank -%}
 <section class="section section--soft" id="social">
   <div class="section__head">
-    <h2 class="section__title">{{ settings.social_section_title | default: 'Follow Us' }}</h2>
+    <h2 class="section__title">__ECM_SOCIAL_TITLE__</h2>
   </div>
   <div class="social-grid">
-    {%- if settings.instagram_official != blank -%}
-      <a class="social-card" href="{{ settings.instagram_official }}" target="_blank" rel="noopener noreferrer">
+    {%- if insta_off != blank -%}
+      <a class="social-card" href="{{ insta_off }}" target="_blank" rel="noopener noreferrer">
         <div class="social-card__tag">Instagram</div>
-        <div class="social-card__handle">{{ settings.instagram_official_handle | default: '@official' }}</div>
+        <div class="social-card__handle">__ECM_INSTAGRAM_OFFICIAL_HANDLE__</div>
         <div class="social-card__cta">Follow →</div>
       </a>
     {%- endif -%}
-    {%- if settings.instagram_secondary != blank -%}
-      <a class="social-card" href="{{ settings.instagram_secondary }}" target="_blank" rel="noopener noreferrer">
+    {%- if insta_sub != blank -%}
+      <a class="social-card" href="{{ insta_sub }}" target="_blank" rel="noopener noreferrer">
         <div class="social-card__tag">Instagram</div>
-        <div class="social-card__handle">{{ settings.instagram_secondary_handle | default: '@sub' }}</div>
+        <div class="social-card__handle">__ECM_INSTAGRAM_SECONDARY_HANDLE__</div>
         <div class="social-card__cta">Follow →</div>
       </a>
     {%- endif -%}
