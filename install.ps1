@@ -18,25 +18,19 @@ function Err($msg)  { Write-Host $msg -ForegroundColor Red }
 
 Info "▶ EC Maker セットアップを開始します（Windows）"
 
-if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    Err "✗ winget が見つかりません。Windows 10/11 で Microsoft Store から 'App Installer' を入れてください。"
+# 道具の確認（Node/git は「第一の儀（環境構築）」で支度済みの前提）
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+$__missing = @()
+if (-not (Get-Command node  -ErrorAction SilentlyContinue)) { $__missing += "Node.js" }
+if (-not (Get-Command git   -ErrorAction SilentlyContinue)) { $__missing += "git" }
+if ($__missing.Count -gt 0) {
+    Write-Host ("✗ 道具が足りません：" + ($__missing -join ", ")) -ForegroundColor Red
+    Write-Host "" -ForegroundColor Red
+    Write-Host "先に『第一の儀（環境構築）』を一度だけ実行してください:" -ForegroundColor Red
+    Write-Host "  iwr -useb https://service.if-juku.net/Ashura/setup.ps1 | iex" -ForegroundColor Red
+    Write-Host "" -ForegroundColor Red
+    Write-Host "（整え終えたら、もう一度この 1 行を貼り直してください）" -ForegroundColor Red
     exit 1
-}
-
-function Ensure-Pkg($cmd, $wingetId, $label) {
-    if (-not (Get-Command $cmd -ErrorAction SilentlyContinue)) {
-        Info "▶ $label をインストールします"
-        winget install --id $wingetId -e --silent --accept-source-agreements --accept-package-agreements
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    }
-}
-
-Ensure-Pkg "node"  "OpenJS.NodeJS.LTS"  "Node.js (LTS)"
-Ensure-Pkg "git"   "Git.Git"            "Git"
-
-if (-not (Get-Command pnpm -ErrorAction SilentlyContinue)) {
-    Info "▶ pnpm を有効化します"
-    corepack enable
 }
 
 # 旧フォルダ ~\.ecmaker からの移行（新しい場所が未作成なら引っ越し）

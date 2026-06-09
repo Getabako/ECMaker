@@ -27,20 +27,21 @@ if [[ "$(uname)" != "Darwin" ]]; then
   exit 1
 fi
 
-if ! command -v brew >/dev/null 2>&1; then
-  cyan "▶ Homebrew をインストールします（初回のみ・数分かかります）"
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  if [[ -d /opt/homebrew/bin ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
+# 道具の確認（Homebrew/Node/git は「第一の儀（環境構築）」で支度済みの前提）
+[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+[[ -x /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)"
+__missing=""
+command -v node  >/dev/null 2>&1 || __missing="$__missing Node.js"
+command -v git   >/dev/null 2>&1 || __missing="$__missing git"
+if [[ -n "$__missing" ]]; then
+  red "✗ 道具が足りません：$__missing"
+  red ""
+  red "先に『第一の儀（環境構築）』を一度だけ実行してください:"
+  red "  /bin/bash -c \"\$(curl -fsSL https://service.if-juku.net/Ashura/setup.sh)\""
+  red ""
+  red "（整え終えたら、もう一度この 1 行を貼り直してください）"
+  exit 1
 fi
-
-if ! command -v node >/dev/null 2>&1; then
-  cyan "▶ Node.js をインストールします"
-  brew install node
-fi
-
-command -v git >/dev/null 2>&1 || brew install git
 
 # 旧フォルダ ~/.ecmaker からの移行（新しい場所が未作成なら引っ越し）
 OLD_DIR="$HOME/.ecmaker"
