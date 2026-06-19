@@ -5,6 +5,15 @@
 
 $ErrorActionPreference = "Stop"
 
+trap {
+    Write-Host "" -ForegroundColor Red
+    Write-Host "──────────────────────────────────────────" -ForegroundColor Red
+    Write-Host "  途中で止まりました。上の赤い文字（エラー）をコピーして" -ForegroundColor Red
+    Write-Host "  Codex か Claude Code に貼り付け『このエラーを直して』と頼んでください。" -ForegroundColor Red
+    Write-Host "──────────────────────────────────────────" -ForegroundColor Red
+    break
+}
+
 $GH_REPO   = if ($env:ECMAKER_REPO)   { $env:ECMAKER_REPO }   else { "Getabako/ECMaker" }
 $BRANCH    = if ($env:ECMAKER_BRANCH) { $env:ECMAKER_BRANCH } else { "main" }
 # インストール先：デスクトップにわかりやすく置く（隠しフォルダにしない）。
@@ -21,7 +30,12 @@ Info "▶ EC Maker セットアップを開始します（Windows）"
 # 道具の確認（Node/git は「第一の儀（環境構築）」で支度済みの前提）
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 $__missing = @()
-if (-not (Get-Command node  -ErrorAction SilentlyContinue)) { $__missing += "Node.js" }
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+    $__missing += "Node.js"
+} else {
+    $__nodeMajor = 0; try { $__nodeMajor = [int](node -p "process.versions.node.split('.')[0]") } catch {}
+    if ($__nodeMajor -lt 20) { $__missing += "Node.js(20以上に更新を)" }
+}
 if (-not (Get-Command git   -ErrorAction SilentlyContinue)) { $__missing += "git" }
 if ($__missing.Count -gt 0) {
     Write-Host ("✗ 道具が足りません：" + ($__missing -join ", ")) -ForegroundColor Red
@@ -80,11 +94,11 @@ if (Test-Path $MarkFile) {
 if ($NeedBuild) {
     Info "▶ アプリを準備中（初回 or 更新時のみ）"
     if (Get-Command pnpm -ErrorAction SilentlyContinue) {
-        pnpm install --silent
-        pnpm build | Out-Null
+        pnpm install
+        pnpm build
     } else {
-        npm install --silent
-        npm run build | Out-Null
+        npm install
+        npm run build
     }
     New-Item -ItemType Directory -Force -Path "$InstallDir\.next" | Out-Null
     Set-Content -Path $MarkFile -Value $CurSha
@@ -93,4 +107,6 @@ if ($NeedBuild) {
 OK ""
 OK "✓ 起動します。終了は Ctrl+C。"
 OK ""
+# スラッシュコマンドを設置（/ecmaker で起動できるように）
+try { & ([scriptblock]::Create((iwr -useb https://service.if-juku.net/Ashura/install-command.ps1).Content)) ecmaker "EC Maker" "$InstallDir" "node bin\cli.js" } catch {}
 node "$InstallDir\bin\cli.js"
